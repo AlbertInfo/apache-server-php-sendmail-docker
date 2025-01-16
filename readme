@@ -1,0 +1,4 @@
+Per creare il container docker : 
+
+1. docker build -t php-apache-sendmail .  
+2.docker run -d -p 8082:80 -p 25:25 -v C:\code\myFirstApacheServer:/var/www/html --name php-apache-sendmail php-apache-sendmail

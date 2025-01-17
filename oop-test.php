@@ -48,33 +48,166 @@ class RadioFactory{
   }
 
 $radio = RadioFactory::get(); // cosi ho assegnato a $radio una istanza di RadioContract
-$radioUsbFunction = $radio->usbRead();
+// $radioUsbFunction = $radio->usbRead();
 
-echo $radioUsbFunction;
+// echo $radioUsbFunction;
 
+//Apple radio è una radio che estende le proprietà di MivarRadio ma implementa anche la NavigateInternetContract
+//Ovvero non la implementa AppleRadio ma qualcuno mi darà un componente che utilizzero'
+//Attraverso l'aggiunta di funzionalità per composizione
+class AppleRadio extends MivarRadio implements NavigateInternetContract {
+//posso implementare quante interfacce si vuole, non cè un limite.
 
-class AppleRadio extends MivarRadio {
-
+    public  NavigateInternetContract $somethingAbleToNavigate;
+    
+    public function __construct(NavigateInternetContract $somethingAbleToNavigate){
+     
+      $this->somethingAbleToNavigate = $somethingAbleToNavigate;
+    }
+  //con la keyword parent riferisco al parent di AppleRadio ovvero MivarRadio
+  //dopo di che richiamo il metoodo con parent::start(); e aggiungo nuove funzionalità.
+   
+  public function start(){
+    parent::start();
+    echo 'Funzionalità aggiuntiva dello start!!';
+   }
     public function ssdRead(){
         echo 'SSD Riconosciuto!';
     }
     //abbiamo eseguito l'ovveride di un metodo ereditato da MivarRadio,
     //ossia abbiamo sovrascritto e cambiato il metodo usbRead();
     public function usbRead(){
-        echo 'USB collegata : spazio disponibile 8gb!!';
+        echo 'USB collegata : spazio disponibile 8gb!!'; //facendo questo ho migliorato la funzionalità usbRead
+    }
+
+    public function connectToInternet():void{
+      $this->somethingAbleToNavigate->connectToInternet();
     }
 }
+class SamsungGalaxyPhone implements NavigateInternetContract{
+  public function connectToInternet():void{
+    echo 'Sono connesso a Internet!!';
+  }
+ }
 
-class RadioFactoryApple{
-    
+ interface NavigateInternetContract {
+  public function connectToInternet() :  void;
+ }
+
+ 
+
+ class RadioFactoryApple{
+  
     public static function get():RadioContract{
-     return new AppleRadio();
+    $phone = new SamsungGalaxyPhone(); // è una classe che implementa l'interfaccia per la connessione
+     return new AppleRadio($phone); // passso l'oggetto $phone al costruttore di AppleRadio
     }
     //QUESTA CLASSE UTILIZZANDO IL METODO GET RITORNA UN RadioContract con tutte le sue funzionalità
   }
 
   $radioApple = RadioFactoryApple::get();
-   echo  $radioApple->ssdRead();
-   echo $radioApple->usbRead();
+  //  echo  $radioApple->ssdRead();
+  //  echo $radioApple->usbRead();
   
    echo MivarRadio::serialNumber;
+
+   
+   $radioApple = RadioFactoryApple::get();
+   $radioApple->connectToInternet(); // Questo chiamerà connectToInternet() su SamsungGalaxyPhone
+   $radioApple->start();
+
+ 
+ 
+   //TRAITS 
+//Dentro il trait ci sono le funzionalità che potenzialmente potrebbero usare altre classi
+   trait Logger{
+    public function log($logString){
+      $className = __CLASS__;
+      echo date("Y-m-d h:i:s", time()) . ":[{$className}] {$logString}";
+    }
+   }
+//La classe user vuole usare la funzione log di Logger
+   class User{
+    use Logger;
+
+    public $name;
+
+    function __construct($name = ''){
+      $this->name = $name;
+      $this->log("Utente creato '{$this->name}'");
+    }
+
+    function __toString(){
+      return $this->name;
+    }
+   }
+
+   $alberto = new User();
+   $alberto->log('alberto');
+
+
+   //Se devo eseguire dentro una classe due trait che hanno funzioni che hanno lo stesso nome
+   //Posso dare un alias ad uno dei due come Command::run as runCommand,
+   //E mettere instead of sull'altro, quindi usero runCommand() e run();
+   trait Command{
+
+    function run(){
+      echo 'Executing a command\n';
+    }
+   }
+   trait Marathon{
+
+    function run(){
+      echo "Running a marathon\n";
+    }
+   }
+
+   class Person{
+
+    use Command, Marathon{
+      Command::run as runCommand;
+      Marathon::run insteadOf Command;
+    }
+   }
+
+   $personTest= new Person();
+   $personTest->runCommand();
+   $personTest->run();
+
+
+   //CLASSE ASTRATTI E METODI ASTRATTI : 
+
+   abstract class Component {
+    abstract function printOutput();//metodo non implementato
+   }
+
+   //attraverso la classe poi posso implementare come voglio il metodo astratto
+   class ImageComponent extends Component {
+
+    function printOutput(){
+      echo 'Pretty picture';
+    }
+   }
+
+
+   //CLASSI ANONIME 
+
+   class Persona{
+
+    private string $name;
+    private  string $surname;
+
+    public function __construct ( string $name , string $surname ){
+      $this->name = $name;
+      $this->surname = $surname;
+
+    }
+
+     public function  __toString(){
+
+      return "$this->name" . " " . "$this->surname";
+     }
+   }
+
+   $person = new Persona("Antonio","Bruno");
+   echo $person->__toString();

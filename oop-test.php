@@ -1,3 +1,4 @@
+
 <?php
 
 interface  RadioContract
@@ -257,7 +258,7 @@ class Driver extends Persona
   private ?DrivingLicense $license;
   public function __construct(DrivingLicense $license)
   {
-    parent::__construct($license->getDriverName(),$license->getDriverSurname());
+    parent::__construct($license->getDriverName(), $license->getDriverSurname());
     $this->setLicense($license);
   }
   public function hasLicense(): bool
@@ -342,12 +343,12 @@ class Police
 
     if (!$car->getDriver()->hasLicense())
       throw new \Exception("Driver has not a license");
-    
-      echo 'Check is ok!!';
+
+    echo 'Check is ok!!';
   }
 }
 
-$driver0 = new Driver(new DrivingLicense("Alberto","Stendardi", new DateTime("2020-01-01"),new DateTime("2030-01-01")));
+$driver0 = new Driver(new DrivingLicense("Alberto", "Stendardi", new DateTime("2020-01-01"), new DateTime("2030-01-01")));
 
 // $driver1 = new Driver("Giulia");
 
@@ -355,3 +356,24 @@ $car = new Car();
 $car->setDriver($driver0);
 $police = new Police();
 echo $police->checkCar($car);
+
+
+//CLASSI ANONIME 
+//Può essere utile se ho bisogno magari di creare al volo una classe extra che ha delle funzionalità diverse
+//Può essere utilizzata anche come wrapper di dati, tenendo una struttura generica dentro ed utilizzarla.
+//Non può essere serializzata ossia trasformare una stringa di testo in una classe o viceversa.
+$anonymous = new class('Alberto', 'Stendardi') extends Persona {
+
+  public function getName(): string
+  {
+    return "Signor" . parent::getName(); //con parent:: prendo il ritorno del metodo della superclasse.
+  }
+};
+
+echo $anonymous->getName();
+
+//CLASSI STANDARD 
+//Data wrapper per eccellenza
+//utilizzate quando si vogliono storare dati in un oggetto invece che in un array
+//Sono serializzabili a differenza delle anonime
+$data = new stdClass(); //simile alle anonime

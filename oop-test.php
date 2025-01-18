@@ -99,7 +99,7 @@ class SamsungGalaxyPhone implements NavigateInternetContract
 {
   public function connectToInternet(): void
   {
-    echo 'Sono connesso a Internet!!';
+    echo 'Sono connesso a Internet!!' ;
   }
 }
 
@@ -116,7 +116,7 @@ class RadioFactoryApple
   public static function get(): RadioContract
   {
     $phone = new SamsungGalaxyPhone(); // è una classe che implementa l'interfaccia per la connessione
-    return new AppleRadio($phone); // passso l'oggetto $phone al costruttore di AppleRadio
+    return new AppleRadio($phone); // passo l'oggetto $phone al costruttore di AppleRadio
   }
   //QUESTA CLASSE UTILIZZANDO IL METODO GET RITORNA UN RadioContract con tutte le sue funzionalità
 }
@@ -377,3 +377,99 @@ echo $anonymous->getName();
 //utilizzate quando si vogliono storare dati in un oggetto invece che in un array
 //Sono serializzabili a differenza delle anonime
 $data = new stdClass(); //simile alle anonime
+
+
+//TIPI DI VALORE E TIPI  DI RIFERIMENTO :
+
+//I tipi di valore sono tipi primitivi (string,int,bool..)
+//La differenza tra i tipi di valore e i tipi di riferimento è  : 
+
+
+$a = 10; // int
+$b = $a; // int 
+$b++; 
+echo "a:" . $a  . PHP_EOL; // a = 10;
+echo "b:" . $b ; // b = 11;
+
+//TIPI DI RIFERIMENTO : SONO GLI OGGETTI IN GENERALE
+
+$c = new stdClass();
+$c->value = 10;
+$d = $c; // A D VIENE ASSEGNATO IL VALORE DI RIFERIMENTO A CUI PUNTA C
+$d->value++; // INCREMENTIAMO IN UN UNICA VOLTA  IL VALUE DI C E IL VALUE DI D 
+
+echo "c:" . $c->value . PHP_EOL;
+echo "d:" . $d->value . PHP_EOL;
+
+//comportamento dei tipi di valore come i tipi di riferimento con la &prima della variabile
+$e = 10; // int
+$f = &$e; // int 
+$f++; 
+echo "e:" . $e  . PHP_EOL; // a = 10;
+echo "f:" . $f  . PHP_EOL;
+
+//comportamento dei tipi di riferimento come i tipi di valore : ragionamento opposto
+//Questo procedimento si chiama CLONAZIONE DEGLI OGGETTI 
+
+//Quando viene assegnato un oggetto ad una nuova variabile, l'oggetto è passato  come riferimento
+//Quindi riferisce la stessa porzione di memoria
+
+//E' possible assegnare una copia dell'oggetto ad una nuova variabile, in questo caso si ottiene una 
+//nuova porzione di memoria
+//Con questa operazione se non viene esplicitato vengono copiate le variabile come tipi di valore ma non quelle
+//con tipi di riferimento(Object)
+
+//Metodo __clone() -> metodo speciale utilizzato per questo procedimento.
+
+$g = new stdClass();
+$g->value=10;
+$h = clone $g; //clonando g , h si comporta come tipo di valore, quindi cambiera solo h
+$h->value++; // aumento solo h perche ho copiato il valore di c in un altra porzione di memoria
+
+echo "g" . $g->value . PHP_EOL;
+echo "h" . $h->value . PHP_EOL;
+
+//REFLECTION O INTROSPEZIONE 
+// Possibilità di esaminare le caratteristiche di un oggetto 
+//Informazioni riguardante l'origine di un oggetto :
+// Utilizzato per : debuggers, serializzatori,profilatori ecc.
+
+$reflection = new ReflectionClass("DrivingLicense");
+echo $reflection;
+
+interface ActionContract{
+  function act():void;
+}
+
+
+class Action implements ActionContract{
+  public function act():void{
+    echo "Action";
+  }
+}
+
+class Action2 {
+  public function act():void{
+    echo "Action2";
+  }
+}
+
+class Action3 {
+
+}
+
+function wantAction(mixed $action){
+
+  $reflectionClass = new ReflectionClass($action);
+
+  if($reflectionClass->hasMethod("act")){
+
+  
+    echo $action->act();
+  }
+// altra parte di codice eventualemn
+}
+
+wantAction(new Action());
+wantAction(new Action2());
+wantAction(new Action3());

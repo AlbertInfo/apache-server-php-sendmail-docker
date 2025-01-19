@@ -461,15 +461,96 @@ class Action3 {
 function wantAction(mixed $action){
 
   $reflectionClass = new ReflectionClass($action);
-
-  if($reflectionClass->hasMethod("act")){
+//esegui il codice all'interno dell'if solo se l'oggetto passato ha implementato il metodo act.
+  if($reflectionClass->hasMethod("act")){ 
 
   
     echo $action->act();
   }
-// altra parte di codice eventualemn
+// altra parte di codice eventuale
 }
 
 wantAction(new Action());
 wantAction(new Action2());
 wantAction(new Action3());
+
+//In questo metodo viene passato un argomento anche chiamato DELEGATO che è una stringa  e che verra istanziato
+//come classe
+function doAction(string $action){
+if(class_exists($action)){
+//se esiste una classe con la stringa passata su $action instanzio la classe con new
+  $reflectionClass = new ReflectionClass($action);
+
+//se la classe implementa un actionContract vado a chiamare anche il metodo act().
+  if($reflectionClass->implementsInterface(ActionContract::class)){
+    echo "ActionContract instance:" . (new $action())->act();
+    return;
+  }
+
+}
+throw new Exception("Actioncontract not implemented : INVALID");
+}
+
+// doAction(Action::class);
+// doAction(Action2::class);
+
+class_exists(Action2::class); //la classe esiste?
+get_declared_classes(); //ritorna un array con tutte le classi dichiarate.
+get_class_methods(Action2::class); //ritorna i metodi di una classe.
+get_class_vars(Action2::class) . PHP_EOL; // ritorna le properties di una classe.
+
+//SERIALIZZAZIONE 
+//Serializzare un oggetto significa, prendere l'oggetto e rappresentarlo in un  insime di byte.
+//Per poterlo rappresentarlo come stringa
+//Avviene attraverso due metodi : 
+
+// serialize(something) 
+//unserialize($encoded)
+
+//Tutte le istanze di oggetti possono essere serializzati.
+
+
+class Bambino{
+
+  public $name;
+
+  public $surname;
+
+  function __sleep() // METODO CHE VIENE EFFETTUATO DURANTE LA SERIALIZZAIZONE
+  //se implemento questo metodo posso fare in modo di non  serializzare alcune property non inserendole
+  //nell'array di ritorno
+  {
+    echo 'SERIALIZZANDO';
+    return array("name","surname");//sleep deve per forza ritornare un array con le property della classe.
+  }
+//Con wakeup se viene implementato posso cambiare per esempio una property
+  function __wakeup()
+  {
+    $this->surname = 'Claudio';
+    echo "DESERIALIZZANDO"; //METODO CHE VIENE INVOCATO DURANTE LA DESERIALIZZAZIONE
+  }
+}
+
+$a = new Bambino();
+$a->name = 'Alice';
+$a->surname = 'Giudice';
+
+echo serialize($a); //ottengo una stringa con i dati e altre informazioni per PHP 
+file_put_contents("serialize-example.txt", serialize($a)); //salvo in un file.txt la stringa
+
+//Posso assegnare il contentuto del file.txt ad una  variabile. questa sarà una stringa.
+$newstring = file_get_contents("serialize-example.txt");
+
+$newUnserializeObject = unserialize($newstring); //ritrasformo la stringa in oggetto.
+var_dump($newUnserializeObject);
+
+//La deserializzazione della stringa è possibile solo se abbiamo la classe iniziale con cui è stata serializzata
+
+//Metodi della serializzazione
+
+// __sleep();
+// __workout();
+
+
+
+

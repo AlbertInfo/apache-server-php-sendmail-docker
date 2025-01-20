@@ -535,14 +535,14 @@ $a = new Bambino();
 $a->name = 'Alice';
 $a->surname = 'Giudice';
 
-echo serialize($a); //ottengo una stringa con i dati e altre informazioni per PHP 
-file_put_contents("serialize-example.txt", serialize($a)); //salvo in un file.txt la stringa
+// echo serialize($a); //ottengo una stringa con i dati e altre informazioni per PHP 
+// file_put_contents("serialize-example.txt", serialize($a)); //salvo in un file.txt la stringa
 
 //Posso assegnare il contentuto del file.txt ad una  variabile. questa sarà una stringa.
-$newstring = file_get_contents("serialize-example.txt");
+// $newstring = file_get_contents("serialize-example.txt");
 
-$newUnserializeObject = unserialize($newstring); //ritrasformo la stringa in oggetto.
-var_dump($newUnserializeObject);
+// $newUnserializeObject = unserialize($newstring); //ritrasformo la stringa in oggetto.
+// var_dump($newUnserializeObject);
 
 //La deserializzazione della stringa è possibile solo se abbiamo la classe iniziale con cui è stata serializzata
 
@@ -551,6 +551,34 @@ var_dump($newUnserializeObject);
 // __sleep();
 // __workout();
 
+//Serializzazione in JSON  (Javscript Object Notaion)
 
+$arr = array("a" => 1, "b" => 2,"c"=>3);
 
+// json_encode() -> accetta un value che è mixed : restituisce una stringa serializzata o false
+// json_encode(mixed $value, int $flags=0, int $depth = 512)
+//$value = oggetto che deve essere serializzato
+//$flags = posso inserire dei comportamenti da eseguire es. delle formattazioni
+//$depth = profondità intesa come quanto va indietro la serializzazione vede se ci sono oggetti che ereditano
+//di standard è impostat a 512.
 
+// echo json_encode($a); //restituisce un json di un oggetto con le sue proprietà
+$s2= json_encode($a,flags:JSON_PRETTY_PRINT,depth:1); //JSON PRETTY PRINT formatta
+
+file_put_contents("person.json",$s2);
+$s3= json_decode($s2); //deserializza su una stdClass non su quella di partenza
+var_dump($s3);
+
+//PRINCIPI SOLID :
+
+// S = Single Responsibility Principle -> una classe deve avere una sola responsabilità
+//Produrre classi che sono fortemente specializzate, con features che cooperano per un solo scopo
+
+//Code smell : puzza di qualcosa che non sta andando bene , pezzi di codice scontestualizzati dentro
+//una classe o large setup in test = quando la classe ha un costruttore troppo complesso.
+
+//O = Open closed principle  classe funzione o modulo dovrebbe avere meccanismi che permettono
+//di estenderne il comportamento senza apportare modifiche al codice esistente.
+//Quindi classi aperte alle estensioni ma chiuse alle modiche
+
+ 

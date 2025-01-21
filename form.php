@@ -13,13 +13,14 @@
 var_dump($_GET); //Accedo alle informazioni inviate dal front-end con method get
 var_dump($_POST) . PHP_EOL; //Accedo alle informazioni inviate dal front-end con method post
 
-// var_dump($_SERVER); //Informazioni sul server
+var_dump($_SERVER); //Informazioni sul server
 var_dump($_SERVER["PHP_SELF"]); //Informazioni sulla pagina percorso
 var_dump($_SERVER["SERVER_PORT"]); //Informazioni sulla porta del server
 var_dump($_SERVER["HTTP_HOST"]); //Informazioni sulL'host
 var_dump($_SERVER["SERVER_PROTOCOL"]); //Informazioni sul protocollo 
 // var_dump($_SERVER["HTTP_REFERER"]); //Informazioni sul protocollo 
 var_dump($_SERVER["REQUEST_METHOD"]); //Informazioni sul metodo
+// var_dump($_FILES['toProcess']);
 
 //$_POST, $_GET e $_FILES sono degli array associativi..
 //Le keys utilizzate corrispondo all'attributo name dei campi utilizzati in html
@@ -30,6 +31,12 @@ if ($_SERVER["REQUEST_METHOD"] == 'GET') {
 } else {
     die('You may only GET this page.');
 }
+
+
+header("Content-Type : text/plain"); // cosi forzo il tipo di headers che il browser riceverà
+// header('Version : 3');
+header('Location : https://www.google.it');
+
 ?>
 
 <!DOCTYPE html>
@@ -75,17 +82,19 @@ if ($_SERVER["REQUEST_METHOD"] == 'GET') {
     //attraverso l'utilizzo dell'array $_FILES;
     // In questo array per ogni immagine inviata abbiamo :
     // nome- tipo-grandezza-tmp_name = il nome e il percorso del file sul server che contine il file
- var_dump ($_FILES);
+   
 
     ?>
 
     <form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="POST" enctype="multipart/form-data">
         <!-- Con il MAX_FILE_SIZE limitiamo al value in byte la grandezza del file da uploadare -->
+        <!-- Con enctype multipart/form-data si dice al server che il file che arriverà è un immagine o file -->
         <input type="hidden" name="MAX_FILE_SIZE" value="10240" id="">
         File name: <input type="file" name="toProcess">
 
         <input type="submit">Invia file</input>
     </form>
+
 
 </body>
 

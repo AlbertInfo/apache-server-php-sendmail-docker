@@ -580,5 +580,23 @@ var_dump($s3);
 //O = Open closed principle  classe funzione o modulo dovrebbe avere meccanismi che permettono
 //di estenderne il comportamento senza apportare modifiche al codice esistente.
 //Quindi classi aperte alle estensioni ma chiuse alle modiche
+//Code smell : troppi if/else complessi
+
+//L = Liskov Substituion Principle = Le classi devono poter essere sostituite dalla classi da cui 
+//derivano(superclassi) in maniera trasparente
+
+//I = Interface Segregation Principle
+
+//Una classe client non dovrebbe dipendere da metodi che non usa , è preferibile che le interfacce siano
+//molte, specifiche e piccole.
+
+
+// D = Dependency Inversion Principle 
+//Una classe dovrebbe dipendere da astrazioni e non da concrete e specifiche implementazioni.
+// Non creare istanze di basso livello(esempio connessioni a dB) nella logica di alto livello
+//Esempio chiamare metodi di classi di basso livello in codice di alto livello.
+//Componenti piu testabili.
+
+
 
  
